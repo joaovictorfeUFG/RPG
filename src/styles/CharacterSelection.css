@@ -17,10 +17,9 @@
 }
 
 .characters-grid {
-  /* display: grid; */
+  display: grid;
   margin-top: 40px;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  grid-template-rows: repeat(2, 1fr);
   gap: 30px;
   align-items: stretch;
   width: 100%;
@@ -40,6 +39,7 @@
   height: 100%;
   min-height: 0;
   width: 100%;
+  max-height: 80vh;
   box-sizing: border-box;
 }
 
