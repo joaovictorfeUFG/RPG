@@ -403,16 +403,20 @@ const CharacterSheet = ({ characterId }) => {
                 <div className="character-portrait-placeholder">👤</div>
               )}
             </div>
-            <label htmlFor="upload-image" className="file-upload-button">Alterar imagem</label>
-            <input
-              id="upload-image"
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="file-input-hidden"
-              disabled={!canEdit}
-            />
-
+            {
+              canEdit &&
+              <>
+                <label htmlFor="upload-image" className="file-upload-button">Alterar imagem</label>
+                <input
+                  id="upload-image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="file-input-hidden"
+                  disabled={!canEdit}
+                />
+              </>
+            }
           </div>
           
           <div className='info-container'>
