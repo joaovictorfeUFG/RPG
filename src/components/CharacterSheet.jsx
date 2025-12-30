@@ -9,6 +9,9 @@ const CharacterSheet = ({ characterId }) => {
   const [nome, setNome] = useState('')
   const [vulgo, setVulgo] = useState('')
   const [imagem, setImagem] = useState('')
+  const [showHistory, setShowHistory] = useState(false)
+  const [historia, setHistoria] = useState('')
+  const [caracteristicasFisicas, setCaracteristicasFisicas] = useState('')
 
   // Estados para atributos (cada um com 5 níveis)
   const [fisico, setFisico] = useState(0)
@@ -185,6 +188,8 @@ const CharacterSheet = ({ characterId }) => {
         setMedicina(antecedentes.medicina ?? 0)
 
         setHabilidades(data.habilidades || '')
+        setHistoria(data.historia || '')
+        setCaracteristicasFisicas(data.caracteristicasFisicas || '')
 
         setHasHydrated(true)
       } catch (error) {
@@ -344,7 +349,9 @@ const CharacterSheet = ({ characterId }) => {
           },
           habilidades,
           tormento,
-          recompensa
+          recompensa,
+          historia,
+          caracteristicasFisicas
         })
       } catch (error) {
         console.error('Erro ao salvar ficha:', error)
@@ -379,7 +386,9 @@ const CharacterSheet = ({ characterId }) => {
     exploracao,
     roubo,
     medicina,
-    habilidades
+    habilidades,
+    historia,
+    caracteristicasFisicas
   ])
 
   return (
@@ -420,6 +429,13 @@ const CharacterSheet = ({ characterId }) => {
           </div>
           
           <div className='info-container'>
+            <button
+              type="button"
+              className="toggle-history-btn"
+              onClick={() => setShowHistory(!showHistory)}
+            >
+              {showHistory ? 'Ver Atributos' : 'Ver História e Características'}
+            </button>
             <div className="info-fields">
               <div className="field-group">
                 <label className="field-label">nome</label>
@@ -445,6 +461,36 @@ const CharacterSheet = ({ characterId }) => {
           </div>
         </div>
 
+        {showHistory ? (
+          <>
+            {/* História e Características Físicas */}
+            <div className="section history-section">
+              <div className="field-group">
+                <label className="field-label">história</label>
+                <textarea
+                  className="field-input large-textarea"
+                  value={historia}
+                  onChange={(e) => canEdit && setHistoria(e.target.value)}
+                  disabled={!canEdit}
+                  placeholder="Descreva a história do personagem..."
+                  rows={8}
+                />
+              </div>
+              <div className="field-group">
+                <label className="field-label">características físicas</label>
+                <textarea
+                  className="field-input large-textarea"
+                  value={caracteristicasFisicas}
+                  onChange={(e) => canEdit && setCaracteristicasFisicas(e.target.value)}
+                  disabled={!canEdit}
+                  placeholder="Descreva as características físicas do personagem..."
+                  rows={8}
+                />
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
         {/* Seção Esquerda: Atributos */}
         <div className="section attributes-section">
           <div className="section-title-row">
@@ -742,6 +788,8 @@ const CharacterSheet = ({ characterId }) => {
             placeholder="Descreva as habilidades do personagem..."
           />
         </div>
+          </>
+        )}
       </div>
     </div>
   )
