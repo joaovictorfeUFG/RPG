@@ -25,7 +25,28 @@ const CharacterSelection = ({ onSelectCharacter }) => {
           ...doc.data()
         }))
         
-        setCharacters(personagensData)
+        // 1. Filtrar personagens do usuário atual
+        const userCharacters = personagensData.filter((char) => char.owner === currentUserId)
+        
+        // 2. Coletar todos os IDs de RPGs dos personagens do usuário
+        const userRpgIds = new Set()
+        userCharacters.forEach((char) => {
+          if (char.rpgs && Array.isArray(char.rpgs)) {
+            char.rpgs.forEach((rpgId) => userRpgIds.add(rpgId))
+          }
+        })
+        
+        // 3. Filtrar outros personagens que pertencem a algum RPG do usuário
+        const otherCharacters = personagensData.filter((char) => {
+          if (char.owner === currentUserId) return false // Já está em userCharacters
+          if (!char.rpgs || !Array.isArray(char.rpgs)) return false
+          if (canCreate) return true // Se o usuário pode criar, incluir todos os personagens
+          return char.rpgs.some((rpgId) => userRpgIds.has(rpgId))
+        })
+        
+        // Combinar: personagens do usuário + outros personagens dos mesmos RPGs
+        const filteredCharacters = [...userCharacters, ...otherCharacters]
+        setCharacters(filteredCharacters)
       } catch (error) {
         console.error('Erro ao carregar personagens:', error)
         setErro('Erro ao carregar personagens. Tente novamente.')
@@ -34,7 +55,12 @@ const CharacterSelection = ({ onSelectCharacter }) => {
       }
     }
 
-    carregarPersonagens()
+    if (currentUserId) {
+      carregarPersonagens()
+    }
+  }, [currentUserId, canCreate])
+
+  useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
       setCurrentUserId(user?.uid || null)
     })
